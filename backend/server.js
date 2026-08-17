@@ -11,7 +11,12 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: "https://wepay-1.onrender.com",
+    origin: [
+      "http://localhost:5175",
+      "http://localhost:5173",
+      "https://wepay-1.onrender.com",
+    ],
+    credentials: true,
   })
 );
 
