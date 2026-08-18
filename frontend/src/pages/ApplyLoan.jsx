@@ -27,16 +27,12 @@ function ApplyLoan() {
     }
 
     if (loanAmount < 1000 || loanAmount > 100000) {
-      setError(
-        "Loan amount must be between ₹1,000 and ₹1,00,000"
-      );
+      setError("Loan amount must be between ₹1,000 and ₹1,00,000");
       return;
     }
 
     if (duration < 1 || duration > 50) {
-      setError(
-        "Loan duration must be between 1 and 50 days"
-      );
+      setError("Loan duration must be between 1 and 50 days");
       return;
     }
 
@@ -46,16 +42,13 @@ function ApplyLoan() {
     const processingFee = loanAmount * 0.02;
 
     // Amount actually received
-    const disbursedAmount =
-      loanAmount - processingFee;
+    const disbursedAmount = loanAmount - processingFee;
 
     // Daily interest = 0.5%
-    const totalInterest =
-      loanAmount * 0.005 * duration;
+    const totalInterest = loanAmount * 0.005 * duration;
 
     // Total repayment
-    const totalRepayment =
-      loanAmount + totalInterest;
+    const totalRepayment = loanAmount + totalInterest;
 
     setSummary({
       amount: loanAmount,
@@ -84,8 +77,8 @@ function ApplyLoan() {
       }
 
       const response = await fetch(
-  `${import.meta.env.VITE_API_URL}/api/loans/apply`,
-  {
+        `${import.meta.env.VITE_API_URL}/api/loans/apply`,
+        {
           method: "POST",
 
           headers: {
@@ -98,7 +91,7 @@ function ApplyLoan() {
             loanDuration: Number(loanDuration),
             purpose: purpose.trim(),
           }),
-        }
+        },
       );
 
       const data = await response.json();
@@ -106,10 +99,7 @@ function ApplyLoan() {
       // ================= ERROR =================
 
       if (!response.ok) {
-        setError(
-          data.message ||
-            "Unable to apply for loan"
-        );
+        setError(data.message || "Unable to apply for loan");
         return;
       }
 
@@ -124,9 +114,7 @@ function ApplyLoan() {
         duration: data.loan.loanDuration,
       });
 
-      alert(
-        "Loan application submitted successfully!"
-      );
+      alert("Loan application submitted successfully!");
 
       // =================================================
       // GO TO KYC
@@ -138,16 +126,10 @@ function ApplyLoan() {
           loanId: data.loan.id || data.loan._id,
         },
       });
-
     } catch (error) {
-      console.error(
-        "Loan application error:",
-        error
-      );
+      console.error("Loan application error:", error);
 
-      setError(
-        "Unable to connect to server"
-      );
+      setError("Unable to connect to server");
     } finally {
       setLoading(false);
     }
@@ -159,25 +141,16 @@ function ApplyLoan() {
 
   return (
     <div className="loan-page">
-
       <div className="loan-card">
-
         {/* Background Logo */}
-        <img
-          src={wepayLogo}
-          alt=""
-          className="page-watermark"
-        />
+        <img src={wepayLogo} alt="" className="page-watermark" />
 
         {/* Heading */}
 
-        <h1>
-          Apply for a Loan
-        </h1>
+        <h1>Apply for a Loan</h1>
 
         <p className="loan-subtitle">
-          See your fees, amount received and
-          repayment before you apply.
+          See your fees, amount received and repayment before you apply.
         </p>
 
         {/* =====================================================
@@ -185,14 +158,10 @@ function ApplyLoan() {
         ===================================================== */}
 
         <div className="loan-form">
-
           {/* Loan Amount */}
 
           <div className="form-group">
-
-            <label>
-              Loan Amount
-            </label>
+            <label>Loan Amount</label>
 
             <input
               type="number"
@@ -206,16 +175,12 @@ function ApplyLoan() {
                 setError("");
               }}
             />
-
           </div>
 
           {/* Loan Duration */}
 
           <div className="form-group">
-
-            <label>
-              Loan Duration
-            </label>
+            <label>Loan Duration</label>
 
             <input
               type="number"
@@ -224,24 +189,18 @@ function ApplyLoan() {
               placeholder="Enter duration in days"
               value={loanDuration}
               onChange={(e) => {
-                setLoanDuration(
-                  e.target.value
-                );
+                setLoanDuration(e.target.value);
 
                 setSummary(null);
                 setError("");
               }}
             />
-
           </div>
 
           {/* Purpose */}
 
           <div className="form-group">
-
-            <label>
-              Purpose
-            </label>
+            <label>Purpose</label>
 
             <textarea
               placeholder="e.g. Education, medical expenses, personal needs..."
@@ -253,21 +212,15 @@ function ApplyLoan() {
                 setError("");
               }}
             />
-
           </div>
 
           {/* Error */}
 
-          {error && (
-            <p className="loan-error">
-              {error}
-            </p>
-          )}
+          {error && <p className="loan-error">{error}</p>}
 
           {/* Continue */}
 
           {!summary && (
-
             <button
               type="button"
               className="primary-btn loan-button"
@@ -275,9 +228,7 @@ function ApplyLoan() {
             >
               Continue
             </button>
-
           )}
-
         </div>
 
         {/* =====================================================
@@ -285,45 +236,25 @@ function ApplyLoan() {
         ===================================================== */}
 
         {summary && (
-
           <div className="loan-summary">
-
-            <h2>
-              Loan Summary
-            </h2>
+            <h2>Loan Summary</h2>
 
             {/* Requested Amount */}
 
             <div className="summary-row">
+              <span>Requested Amount</span>
 
-              <span>
-                Requested Amount
-              </span>
-
-              <strong>
-                ₹
-                {summary.amount.toLocaleString(
-                  "en-IN"
-                )}
-              </strong>
-
+              <strong>₹{summary.amount.toLocaleString("en-IN")}</strong>
             </div>
 
             {/* Processing Fee */}
 
             <div className="summary-row">
-
-              <span>
-                Processing Fee (2%)
-              </span>
+              <span>Processing Fee (2%)</span>
 
               <strong>
-                - ₹
-                {summary.processingFee.toLocaleString(
-                  "en-IN"
-                )}
+                - ₹{summary.processingFee.toLocaleString("en-IN")}
               </strong>
-
             </div>
 
             <div className="summary-divider"></div>
@@ -331,66 +262,35 @@ function ApplyLoan() {
             {/* Amount Received */}
 
             <div className="summary-row received">
-
-              <span>
-                You'll Receive
-              </span>
+              <span>You'll Receive</span>
 
               <strong>
-                ₹
-                {summary.disbursedAmount.toLocaleString(
-                  "en-IN"
-                )}
+                ₹{summary.disbursedAmount.toLocaleString("en-IN")}
               </strong>
-
             </div>
 
             {/* Duration */}
 
             <div className="summary-row">
+              <span>Loan Duration</span>
 
-              <span>
-                Loan Duration
-              </span>
-
-              <strong>
-                {summary.duration} days
-              </strong>
-
+              <strong>{summary.duration} days</strong>
             </div>
 
             {/* Interest */}
 
             <div className="summary-row">
+              <span>Total Interest</span>
 
-              <span>
-                Total Interest
-              </span>
-
-              <strong>
-                ₹
-                {summary.totalInterest.toLocaleString(
-                  "en-IN"
-                )}
-              </strong>
-
+              <strong>₹{summary.totalInterest.toLocaleString("en-IN")}</strong>
             </div>
 
             {/* Total Repayment */}
 
             <div className="summary-row repayment">
+              <span>Total Repayment</span>
 
-              <span>
-                Total Repayment
-              </span>
-
-              <strong>
-                ₹
-                {summary.totalRepayment.toLocaleString(
-                  "en-IN"
-                )}
-              </strong>
-
+              <strong>₹{summary.totalRepayment.toLocaleString("en-IN")}</strong>
             </div>
 
             {/* Confirm */}
@@ -401,19 +301,11 @@ function ApplyLoan() {
               onClick={submitLoan}
               disabled={loading}
             >
-
-              {loading
-                ? "Submitting..."
-                : "Confirm & Apply"}
-
+              {loading ? "Submitting..." : "Confirm & Apply"}
             </button>
-
           </div>
-
         )}
-
       </div>
-
     </div>
   );
 }
