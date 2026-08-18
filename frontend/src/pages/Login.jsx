@@ -12,16 +12,19 @@ function Login() {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
         },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
+      );
 
       const data = await response.json();
 
@@ -38,14 +41,14 @@ function Login() {
 
       alert("Login successful!");
 
-console.log("LOGIN USER:", data.user);
-console.log("ROLE:", data.user.role);
+      console.log("LOGIN USER:", data.user);
+      console.log("ROLE:", data.user.role);
 
-if (data.user.role === "admin") {
-  navigate("/admin");
-} else {
-  navigate("/");
-}
+      if (data.user.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
     } catch (error) {
       console.error("Login error:", error);
       alert("Unable to connect to server");
