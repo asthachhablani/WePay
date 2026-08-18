@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-function LoanCalculator({ token, hasActiveLoan, navigate }) {
+
+function LoanCalculator({ token, isAdmin, hasActiveLoan, navigate }) {
   const [amount, setAmount] = useState(10000);
   const [duration, setDuration] = useState(10);
 
@@ -20,6 +21,11 @@ function LoanCalculator({ token, hasActiveLoan, navigate }) {
   const handleAction = () => {
     if (!token) {
       navigate("/login");
+      return;
+    }
+
+    if (isAdmin) {
+      navigate("/admin");
       return;
     }
 
@@ -155,9 +161,11 @@ function LoanCalculator({ token, hasActiveLoan, navigate }) {
         <button className="calculator-action" onClick={handleAction}>
           {!token
             ? "Get Started"
-            : hasActiveLoan
-              ? "View Dashboard"
-              : "Apply for a Loan"}
+            : isAdmin
+              ? "Admin Dashboard"
+              : hasActiveLoan
+                ? "View Dashboard"
+                : "Apply for a Loan"}
 
           <span>↗</span>
         </button>
@@ -170,10 +178,13 @@ function LoanCalculator({ token, hasActiveLoan, navigate }) {
     </div>
   );
 }
+
 function Home() {
   const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user"));
+  const isAdmin = user?.role === "admin";
 
   const [hasActiveLoan, setHasActiveLoan] = useState(false);
   const [checkingLoan, setCheckingLoan] = useState(true);
@@ -186,7 +197,8 @@ function Home() {
   // Check user's existing loan
   useEffect(() => {
     const checkLoan = async () => {
-      if (!token) {
+      // Admin doesn't need to check user loans
+      if (!token || isAdmin) {
         setCheckingLoan(false);
         return;
       }
@@ -218,7 +230,7 @@ function Home() {
     };
 
     checkLoan();
-  }, [token]);
+  }, [token, isAdmin]);
 
   // Start counter when section enters viewport
   useEffect(() => {
@@ -285,6 +297,15 @@ function Home() {
       );
     }
 
+    if (isAdmin) {
+      return (
+        <button className="new-primary-btn" onClick={() => navigate("/admin")}>
+          Admin Dashboard
+          <span>↗</span>
+        </button>
+      );
+    }
+
     if (checkingLoan) {
       return (
         <button className="new-primary-btn" disabled>
@@ -320,8 +341,6 @@ function Home() {
     <div className="new-home">
       {/* ================= NAVBAR ================= */}
 
-      {/* ================= NAVBAR ================= */}
-
       <nav className="new-navbar">
         {/* Brand */}
 
@@ -353,9 +372,9 @@ function Home() {
             <>
               <button
                 className="nav-dashboard"
-                onClick={() => navigate("/dashboard")}
+                onClick={() => navigate(isAdmin ? "/admin" : "/dashboard")}
               >
-                Dashboard
+                {isAdmin ? "Admin Dashboard" : "Dashboard"}
                 <span>↗</span>
               </button>
 
@@ -417,10 +436,10 @@ function Home() {
                 <button
                   onClick={() => {
                     setMenuOpen(false);
-                    navigate("/dashboard");
+                    navigate(isAdmin ? "/admin" : "/dashboard");
                   }}
                 >
-                  Dashboard
+                  {isAdmin ? "Admin Dashboard" : "Dashboard"}
                 </button>
 
                 <button
@@ -664,6 +683,7 @@ function Home() {
 
         <LoanCalculator
           token={token}
+          isAdmin={isAdmin}
           hasActiveLoan={hasActiveLoan}
           navigate={navigate}
         />
@@ -944,11 +964,15 @@ function Home() {
 
             {token ? (
               <>
-                <button onClick={() => navigate("/dashboard")}>
-                  Dashboard
+                <button
+                  onClick={() =>
+                    navigate(isAdmin ? "/admin" : "/dashboard")
+                  }
+                >
+                  {isAdmin ? "Admin Dashboard" : "Dashboard"}
                 </button>
 
-                {!hasActiveLoan && (
+                {!isAdmin && !hasActiveLoan && (
                   <button onClick={() => navigate("/apply-loan")}>
                     Apply for a Loan
                   </button>
