@@ -309,11 +309,18 @@ function KYC() {
               <div className="kyc-field">
                 <label>Date of Birth</label>
 
-                <input
+                                <input
                   type="date"
                   name="dateOfBirth"
                   value={formData.dateOfBirth}
                   onChange={handleChange}
+                  max={
+                    new Date(
+                      new Date().setFullYear(new Date().getFullYear() - 18)
+                    )
+                      .toISOString()
+                      .split("T")[0]
+                  }
                   required
                 />
               </div>
