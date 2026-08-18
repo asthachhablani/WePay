@@ -40,6 +40,36 @@ const submitKYC = async (req, res) => {
         message: "Please fill all KYC fields",
       });
     }
+        // =================================================
+    // AGE CHECK (must be 18+)
+    // =================================================
+
+    const dob = new Date(dateOfBirth);
+
+    if (isNaN(dob.getTime())) {
+      return res.status(400).json({
+        message: "Please provide a valid date of birth",
+      });
+    }
+
+    const today = new Date();
+
+    let age = today.getFullYear() - dob.getFullYear();
+
+    const hasHadBirthdayThisYear =
+      today.getMonth() > dob.getMonth() ||
+      (today.getMonth() === dob.getMonth() &&
+        today.getDate() >= dob.getDate());
+
+    if (!hasHadBirthdayThisYear) {
+      age -= 1;
+    }
+
+    if (age < 18) {
+      return res.status(400).json({
+        message: "You must be at least 18 years old to apply for a loan",
+      });
+    }
 
     // =================================================
     // OTP CHECK
