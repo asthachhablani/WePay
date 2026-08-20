@@ -59,18 +59,18 @@ function Payment() {
   const handlePayment = async (e) => {
     e.preventDefault();
 
-    const paymentAmount = Number(amount);
+        const paymentAmount = Math.round(Number(amount));
 
     if (!paymentAmount || paymentAmount <= 0) {
       setError("Enter a valid payment amount");
       return;
     }
 
-    if (paymentAmount > repayment.remainingAmount) {
+    const remainingRounded = Math.round(repayment.remainingAmount);
+
+    if (paymentAmount > remainingRounded) {
       setError(
-        `Payment cannot exceed ₹${repayment.remainingAmount.toLocaleString(
-          "en-IN",
-        )}`,
+        `Payment cannot exceed ₹${remainingRounded.toLocaleString("en-IN")}`,
       );
       return;
     }
@@ -141,24 +141,31 @@ function Payment() {
 
         {repayment && (
           <>
-            <div className="payment-overview">
+                        <div className="payment-overview">
               <div>
                 <span>Total Due</span>
 
-                <strong>₹{repayment.amountDue.toLocaleString("en-IN")}</strong>
+                <strong>
+                  ₹{Math.round(repayment.amountDue).toLocaleString("en-IN")}
+                </strong>
               </div>
 
               <div>
                 <span>Already Paid</span>
 
-                <strong>₹{repayment.amountPaid.toLocaleString("en-IN")}</strong>
+                <strong>
+                  ₹{Math.round(repayment.amountPaid).toLocaleString("en-IN")}
+                </strong>
               </div>
 
               <div className="payment-remaining">
                 <span>Remaining</span>
 
                 <strong>
-                  ₹{repayment.remainingAmount.toLocaleString("en-IN")}
+                  ₹
+                  {Math.round(repayment.remainingAmount).toLocaleString(
+                    "en-IN",
+                  )}
                 </strong>
               </div>
             </div>
@@ -169,10 +176,10 @@ function Payment() {
               <div className="payment-input-wrap">
                 <span>₹</span>
 
-                <input
+                                <input
                   type="number"
                   min="1"
-                  max={repayment.remainingAmount}
+                  max={Math.round(repayment.remainingAmount)}
                   placeholder="Enter amount"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
